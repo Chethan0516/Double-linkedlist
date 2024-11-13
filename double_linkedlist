@@ -1,0 +1,235 @@
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.next = None
+        self.prev = None
+
+class Double:
+    def __init__(self):
+        self.head = None
+    
+    def append(self, data):
+        new_node = Node(data)
+        if self.head is None:
+            self.head = new_node
+            return
+        curr = self.head
+        while curr.next:
+            curr = curr.next
+        curr.next = new_node
+        new_node.prev = curr
+    
+    def display(self):
+        if self.head is None:
+            return 
+        curr = self.head
+        while curr:
+            print(curr.data, end="<-->")
+            curr = curr.next
+        print("None")
+        curr = self.head
+        while curr.next:
+            curr = curr.next
+        while curr:
+            print(curr.data, end="-->")
+            curr = curr.prev
+        print("None")
+    
+    def clear(self):
+        self.head = None
+        
+    def append_head(self, data):
+        new_node = Node(data)
+        if self.head is None:
+            self.head = new_node
+        else:
+            new_node.next = self.head
+            self.head.prev = new_node
+            self.head = new_node
+
+    def search(self, data):
+        if self.head is None:
+            return 
+        curr = self.head
+        index = 0
+        while curr is not None and curr.data != data:
+            index += 1
+            curr = curr.next
+        print("data",curr.data, index)
+        curr = self.head
+        while curr.next:
+            curr = curr.next
+        index = 0
+        while curr is not None and curr.data != data:
+            index += 1
+            curr = curr.prev
+        print("data-", curr.data, index)
+        
+    def length(self):
+        if not self.head:
+            return 0
+        curr = self.head
+        i = 0  # if i == 1  then while curr.next:
+        while curr:
+            curr = curr.next
+            i += 1
+        print(i)
+
+    def insert(self, key, data):
+        if not self.head:
+            return 
+        curr = self.head
+        while curr and curr.data != key:
+            curr = curr.next
+        if curr is None:
+            print("not found")
+            return
+        new_node = Node(data)
+        new_node.next = curr.next
+        if curr.next is not None:
+            curr.next.prev = new_node
+        curr.next = new_node
+        new_node.prev = curr
+
+    def insert_before_node(self, key, data):
+        if not self.head:
+            return 
+        curr = self.head
+        second = None
+        while curr and curr.data != key:
+            second = curr
+            curr = curr.next
+        if curr is None:
+            print("not found")
+            return 
+        new_node = Node(data)
+        new_node.next = second.next
+        second.next = new_node
+        new_node.next.prev = new_node
+        new_node.prev = second
+
+    # without second
+        # new_node.prev = curr.prev
+        # new_node.next = curr
+        # if curr.prev:
+        #     curr.prev.next = new_node
+        # curr.prev = new_node
+        
+    def insert_pos(self, index, data):
+        new_node = Node(data)
+        curr = self.head
+        if not self.head and index == 0:
+            new_node.next = curr
+            self.head.prev = new_node
+            self.head = new_node
+        
+        count = 0
+        while curr is not None and count < index - 1:
+            curr = curr.next
+            count += 1
+        if curr is None:
+            print("Not found")
+            return
+        new_node.next = curr.next
+        new_node.prev = curr
+        if curr.next is not None:
+            curr.next.prev = new_node
+        curr.next = new_node
+    
+    def deletion(self, pos):
+        if not self.head:
+            return 
+        if pos == 0:
+            self.head = self.head.next
+            self.head.prev = None
+        index = 0
+        curr = self.head
+        while curr and index < pos - 2:
+            curr = curr.next
+            index += 1
+        if curr is None:
+            print("not found")
+            return 
+        curr.next = curr.next.next
+        curr.next.prev = curr
+
+    def deletion_end(self):
+        if not self.head:
+            return 
+        curr = self.head
+        second = None
+        while curr.next is not None:
+            second = curr
+            curr = curr.next
+        second.next = curr.prev = None
+
+    def reverse(self):
+        if not self.head:
+            return 
+        curr = self.head
+        second = None
+        while curr:
+            second = curr.prev
+            curr.prev = curr.next
+            curr.next = second
+            curr = curr.prev
+        if second is not None:
+            self.head = second.prev
+
+    def duplicates(self):
+        if not self.head:
+            return 
+        curr = self.head
+        seen = set()
+        while curr:
+            if curr.data in seen:
+                if curr.prev: # no need
+                    curr.prev.next = curr.next
+                if curr.next:
+                    curr.next.prev = curr.prev
+            else:
+                seen.add(curr.data)
+            curr = curr.next
+
+
+        
+
+
+node = Double()
+for i in range(4):
+    node.append(i)
+node.display()
+# node.clear()
+# for i in range(4):
+#     node.append_head(i)
+node.display()
+node.search(1)
+node.length()
+node.insert(3, 4)
+node.display()
+node.insert(2, 10)
+node.display()
+node.insert_before_node(10, 9)
+node.display()
+node.insert_pos(4, 8)
+node.display()
+node.deletion(5)
+print()
+node.display()
+node.deletion_end()
+node.display()
+print()
+node.reverse()
+node.display()
+node.clear()
+print("duplicates")
+node.append(3)
+node.append(5)
+node.append(3)
+node.append(8)
+node.append(10)
+node.append(5)
+node.display()
+print("without duplicates")
+node.duplicates()
+node.display()
